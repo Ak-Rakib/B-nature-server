@@ -19,12 +19,21 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run () {
     try{
         const reviewCollection = client.db('Bnature').collection('reviews');
+        const projectCollection = client.db('Bnature').collection('project');
 
         app.get('/review', async (req, res) => {
         const query = {};
         const cursor = reviewCollection.find(query);
         const result = await cursor.toArray();
         res.send(result);
+        })
+
+        app.get('/projects', async (req, res) => {
+            const query = {};
+            const cursor = projectCollection.find(query);
+            const result = await cursor.toArray();
+            console.log(result)
+            res.send(result);
         })
     }
     finally{
