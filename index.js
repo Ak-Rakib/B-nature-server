@@ -18,27 +18,39 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 
 // -------------------------CRUD operation-------------------
-async function run () {
-    try{
+async function run() {
+    try {
         const serviceCollection = client.db('Bnature').collection('reviews');
         const projectCollection = client.db('Bnature').collection('porject');
         const reviewCollection = client.db('Bnature').collection('comment')
 
 
-        // ---------------- create ----------------------------
+        // ----------------  ----------------------------
+        app.get('/comment', async (req, res) => {
+            console.log(req.query.email)
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+            cursor = reviewCollection.find(query)
+            const result = await cursor.toArray();
+            res.send(result)
+        })
 
-        app.post('/comment',async (req, res) => {
+        app.post('/comment', async (req, res) => {
             const review = req.body;
             const result = await reviewCollection.insertOne(review)
             res.send(result)
         })
-        
-        // --------------- Read -------------------------------
+
+        // ---------------  -------------------------------
         app.get('/review', async (req, res) => {
-        const query = {};
-        const cursor = serviceCollection.find(query);
-        const result = await cursor.toArray();
-        res.send(result);
+            const query = {};
+            const cursor = serviceCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
         })
 
         app.get('/projects', async (req, res) => {
@@ -50,19 +62,19 @@ async function run () {
 
         app.get('/review/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id:ObjectID(id) }
+            const query = { _id: ObjectID(id) }
             const result = await serviceCollection.findOne(query);
             res.send(result);
         })
 
         app.get('/comment', async (req, res) => {
             const query = {};
-            const curson = reviewCollection.find(query);
-            const result = await curson.toArray();
+            const cursor = reviewCollection.find(query);
+            const result = await cursor.toArray();
             res.send(result)
         })
     }
-    finally{
+    finally {
 
     }
 }
@@ -75,6 +87,6 @@ app.get('/', (req, res) => {
     res.send('B-nature Server site running')
 })
 
-app.listen(port, ()=> {
+app.listen(port, () => {
     console.log(`Running this site ${port}`)
 })
